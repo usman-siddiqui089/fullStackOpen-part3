@@ -60,13 +60,26 @@ function getRandomID() {
 app.use(express.json()) //json-parser
 app.post('/api/persons/', (request,response) => {
     const body = request.body
-    const newPerson = {
-        id: getRandomID(),
-        name: body.name,
-        number: body.number
+    const isDuplicate = persons.find(person => person.name === body.name)
+    if(!body.name || !body.number){
+        return response.status(400).json({
+            error: 'Name or Number is missing. Please try again.'
+        })
     }
-    persons = persons.concat(newPerson)
-    response.json(newPerson)
+    else if(isDuplicate){
+        return response.status(400).json({
+            error: 'Duplicate name exists. Try new.'
+        })
+    }
+    else{
+        const newPerson = {
+            id: getRandomID(),
+            name: body.name,
+            number: body.number
+        }
+        persons = persons.concat(newPerson)
+        response.json(newPerson)
+    }
 })
 
 const PORT = 3001
