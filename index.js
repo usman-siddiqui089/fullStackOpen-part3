@@ -24,8 +24,10 @@ let persons = [
         number: "39-23-6423122"
     },
 ]
+app.use(express.json()) //json-parser
+morgan.token('body',(req,res) => JSON.stringify(req.body))
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-app.use(morgan('tiny'))
 app.get('/api/persons', (request,response) => {
     response.json(persons)
 })
@@ -60,7 +62,7 @@ app.delete('/api/persons/:id', (request, response) => {
 function getRandomID() {
     return Math.floor(Math.random() * 100000);
 }
-app.use(express.json()) //json-parser
+
 app.post('/api/persons/', (request,response) => {
     const body = request.body
     const isDuplicate = persons.find(person => person.name === body.name)
