@@ -39,20 +39,31 @@ app.get('/api/persons', (request,response) => {
     })
 })
 
-app.get('/info', (request,response) => {
-    const entriesCount = persons.length
-    const date = new Date()
-    response.send(`
-        <div>
-            <p>Phonebook has info for ${entriesCount} people</p>
-            <p>${date}</p>
-        </div>`)
+app.get('/info', (request,response,next) => {
+    Person.find({})
+        .then(result => {
+            const entriesCount = result.length
+            const date = new Date()
+            response.send(`
+                <div>
+                    <p>Phonebook has info for ${entriesCount} people</p>
+                    <p>${date}</p>
+                </div>
+            `)
+        })
+        .catch(error => {
+            next(error)
+        })
 })
 
-app.get('/api/persons/:id', (request,response) => {
-    Person.findById(request.params.id).then(person => {
-        response.json(person)
-    })
+app.get('/api/persons/:id', (request,response,next) => {
+    Person.findById(request.params.id)
+        .then(person => {
+            response.json(person)
+        })
+        .catch(error => {
+            next(error)
+        })
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
